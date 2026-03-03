@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constantcity | System Monitor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+        
+        body {
+            background-color: #050505;
+            color: #00ff41;
+            font-family: 'Space Mono', monospace;
+            overflow: hidden;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 10;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 255, 65, 0.1) 50%, rgba(0, 0, 0, 0) 100%);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 100%;
+            animation: scanline 10s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            100% { bottom: -100px; }
+        }
+
+        .crt-flicker {
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.98; }
+            50% { opacity: 1; }
+            100% { opacity: 0.99; }
+        }
+
+        canvas {
+            filter: blur(0.5px) contrast(1.2);
+        }
+
+        .glass {
+            background: rgba(0, 255, 65, 0.03);
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 h-screen flex flex-col">
+    <div class="scanline"></div>
+    
+    <!-- Header -->
+    <header class="mb-6 flex justify-between items-end border-b border-green-900 pb-2">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tighter uppercase">The Architecture of Constantcity</h1>
+            <p class="text-xs opacity-70">v1.0.0 // SCHOLARLY_EDITION // AUTHOR: SYSTEM_ARCHITECT</p>
+        </div>
+        <div class="text-right hidden md:block">
+            <p class="text-xs font-bold uppercase" id="timestamp"></p>
+            <p class="text-xs">SYS_STATUS: NOMINAL</p>
+        </div>
+    </header>
+
+    <main class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-hidden">
+        
+        <!-- Left Panel: The Web of {n} Visualizer -->
+        <div class="lg:col-span-2 glass rounded-lg p-4 flex flex-col relative overflow-hidden">
+            <h2 class="text-sm font-bold mb-4 uppercase border-l-4 border-green-500 pl-2">The Web of {n} // Live Interaction</h2>
+            <canvas id="webCanvas" class="flex-1 w-full h-full cursor-crosshair"></canvas>
+            <div class="absolute bottom-4 right-4 text-[10px] opacity-50 uppercase text-right">
+                Real-time Gradient Dissipation<br>
+                Total Coupling Active
+            </div>
+        </div>
+
+        <!-- Right Panel: Data Readout -->
+        <div class="flex flex-col gap-6 overflow-y-auto pr-2">
+            
+            <!-- System Stats -->
+            <div class="glass rounded-lg p-4">
+                <h3 class="text-xs font-bold mb-3 uppercase">Dynamic Variables</h3>
+                <div class="space-y-3">
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-1">
+                            <span>GRADIENT_TENSION (G)</span>
+                            <span id="tensionVal">84%</span>
+                        </div>
+                        <div class="w-full bg-green-900/30 h-1.5 rounded-full overflow-hidden">
+                            <div id="tensionBar" class="bg-green-500 h-full transition-all duration-500" style="width: 84%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-1">
+                            <span>ENERGY_TAX_RATE (dS/dt)</span>
+                            <span id="taxVal">0.0021</span>
+                        </div>
+                        <div class="w-full bg-green-900/30 h-1.5 rounded-full overflow-hidden">
+                            <div id="taxBar" class="bg-green-400 h-full transition-all duration-500" style="width: 21%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-1">
+                            <span>ASYMPTOTIC_PROXIMITY</span>
+                            <span id="decimalVal">0.0000000042</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal Output -->
+            <div class="glass rounded-lg p-4 flex-1 flex flex-col font-mono text-[11px] leading-relaxed">
+                <h3 class="text-xs font-bold mb-3 uppercase">Theoretical Feed</h3>
+                <div id="terminalBody" class="flex-1 overflow-y-auto space-y-2 opacity-80">
+                    <p class="text-green-300">> System initialized.</p>
+                    <p>> Loading Interdependence Framework...</p>
+                    <p>> Calculating Web of {n}...</p>
+                </div>
+            </div>
+
+            <button onclick="rebootSystem()" class="w-full py-3 border border-green-500 text-green-500 hover:bg-green-500 hover:text-black transition-all font-bold text-xs uppercase tracking-widest">
+                Trigger Recursive Return (Reboot)
+            </button>
+        </div>
+    </main>
+
+    <footer class="mt-6 text-[10px] flex justify-between opacity-50 uppercase italic">
+        <span>"Balance is the unfinished relaxation."</span>
+        <span>Asymptotic Precision: ∞</span>
+    </footer>
+
+    <script>
+        // System Clock
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('timestamp').innerText = now.toISOString();
+        }, 1000);
+
+        // Terminal Feed
+        const quotes = [
+            "The self is not an origin; it is a dynamic intersection.",
+            "Energy is never lost; it is only rearranged.",
+            "Independence is an ontological hallucination.",
+            "Existence is the residual structure of asymptotic smoothing.",
+            "The Energy Tax is the cost of transitions.",
+            "Consciousness is a high-resolution thermodynamic flow.",
+            "The universe is a single evolving structure relaxing toward balance.",
+            "We are the decimal that never reaches zero."
+        ];
+
+        const terminal = document.getElementById('terminalBody');
+        function addTerminalLine() {
+            const line = document.createElement('p');
+            line.innerHTML = `> ${quotes[Math.floor(Math.random() * quotes.length)]}`;
+            terminal.appendChild(line);
+            if (terminal.childNodes.length > 20) terminal.removeChild(terminal.firstChild);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        setInterval(addTerminalLine, 4000);
+
+        // Web of {n} Visualization
+        const canvas = document.getElementById('webCanvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        const numPoints = 40;
+        let width, height;
+
+        function resize() {
+            width = canvas.width = canvas.parentElement.clientWidth;
+            height = canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.onresize = resize;
+        resize();
+
+        class Point {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = 1 + Math.random() * 2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#00ff41';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < numPoints; i++) points.push(new Point());
+
+        let mouse = { x: -1000, y: -1000 };
+        canvas.onmousemove = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        };
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Interaction logic
+            points.forEach((p, i) => {
+                p.update();
+                p.draw();
+
+                // Connect nodes (The Web)
+                for (let j = i + 1; j < points.length; j++) {
+                    const p2 = points[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(0, 255, 65, ${1 - dist / 150})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+
+                // Mouse interaction (Gradient Tension)
+                const dmx = p.x - mouse.x;
+                const dmy = p.y - mouse.y;
+                const mDist = Math.sqrt(dmx*dmx + dmy*dmy);
+                if (mDist < 100) {
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(mouse.x, mouse.y);
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${1 - mDist / 100})`;
+                    ctx.stroke();
+                }
+            });
+
+            // Update stats
+            const tension = 70 + Math.sin(Date.now() / 1000) * 10;
+            document.getElementById('tensionBar').style.width = tension + '%';
+            document.getElementById('tensionVal').innerText = Math.round(tension) + '%';
+            
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        function rebootSystem() {
+            const main = document.querySelector('main');
+            main.style.opacity = '0';
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        }
+    </script>
+</body>
+</html>
